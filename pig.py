@@ -1,3 +1,5 @@
+__author__ = 'Patrick Abejar'
+
 import argparse
 import random
 import time
@@ -12,6 +14,7 @@ a win and also if the players' turn is finished.
 
 class Player:
 
+    # Encapsulates all class variables of Player
     def __init__(self, identity):
 
         self.identityEnc = identity
@@ -20,30 +23,37 @@ class Player:
         self.tempScorePrev = 0    # Keeps previous rounds' temp score
         self.isWinnerEnc = False
 
+    # Returns the encapsulated identity of the player
     def identity(self):
 
         return self.identityEnc
 
+    # Returns the encapsulated total game score of the player
     def score(self):
 
         return self.scoreEnc
 
-    # Needed for users who try to hold points after game ends.
+    # Needed for users who try to hold points after game ends as this will
+    # subtract any added points to the total score. "sub" will be subtract-
+    # ed from the score.
     def subtract_from_score(self, sub):
 
         self.scoreEnc -= sub
 
+    # Returns how many points were held last hold turn
+    def previous_hold_score(self):
+
+        return self.tempScorePrev
+
+    # Declares player winner if True
     def is_winner(self):
 
         return self.isWinnerEnc
 
+    # Sets the encapsulated winner variable to True
     def make_winner(self):
 
         self.isWinnerEnc = True
-
-    def previous_hold_score(self):
-
-        return self.tempScorePrev
 
     # Roll a 6-faced die and display the current results
     def roll_die(self):
@@ -202,6 +212,9 @@ player is human or a computer player based on user input.
 
 class PlayerFactory:
 
+    # This requires the identity of the player and if the player is a
+    # human or a computer as its parameters. The object will be
+    # instantiated dependent on being human/ computer.
     def get_player(self, identity, type_of_player):
 
         if type_of_player == "computer":
@@ -214,43 +227,44 @@ class PlayerFactory:
 """ A GAME is the interaction between the two players along that provide
 for two steps of each round that occur in the GAME. For Pig, it is roll-
 ing the die and deciding whether to hold or roll again. GAME also keeps
-a list of players
+a list of the two players. The parameters passed into the construtor of
+GAME are required, as these are both the players participating in the
+GAME.
 """
 
 
 class Game:
 
+    # The class variables of Game store the players in a list.
     def __init__(self, player1, player2):
 
         self.listOfPlayers = []
         self.listOfPlayers.append(player1)
         self.listOfPlayers.append(player2)
 
-    def add_player(self, identity):
-
-        self.listOfPlayers.append(Player(identity))
-
-    def remove_players(self, num_to_remove = 1):
-
-        for x in range(0, num_to_remove):
-            self.listOfPlayers.pop()
-
+    # Returns the number of players currently playing
     def number_of_players(self):
 
         return len(self.listOfPlayers)
 
+    # Returns the list of players currently playing
     def player_list(self):
 
         return self.listOfPlayers
 
+    # Returns a random number from 1 to 6, based on the 6-faced die
+    # Takes in the player rolling the die
     def roll_game_die(self, player):
 
         return player.roll_die()
 
+    # Tests previous roll_game_die result through the first parameter
+    # if the player, second input, has won the game
     def decide(self, roll_die_value, player):
 
         return player.decide(roll_die_value)
 
+    # Removes all the current players from the list
     def reset_game(self):
 
         for x in range(0,len(self.listOfPlayers)):
@@ -268,6 +282,8 @@ existed for more than one minute.
 
 class TimedGameProxy(Game):
 
+    # Almost similar to the Game constructor, but with an additional
+    # startTime class variable to keep track of start of game
     def __init__(self, playerA, playerB):
 
         self.listOfPlayers = []
@@ -275,6 +291,7 @@ class TimedGameProxy(Game):
         self.listOfPlayers.append(playerA)
         self.listOfPlayers.append(playerB)
 
+    # Starts a timed loop of the game for each player.
     def start_game(self):
 
         winner = 0
